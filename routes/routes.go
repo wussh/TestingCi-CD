@@ -1,0 +1,38 @@
+package routes
+
+import (
+	c "kentang/controller"
+	"kentang/key"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+)
+
+func New() *echo.Echo {
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello Kentang")
+	})
+	e.POST("/auth/login", c.LoginController)
+	e.POST("/users", c.CreateUserController)
+
+	// Route Books
+	e.GET("/books", c.GetBooksController)
+	e.GET("/books/:id", c.GetBookController)
+
+	// JWT
+	jwtAuth := e.Group("/jwt/redirected")
+	jwtAuth.Use(middleware.JWT([]byte(key.SECRET_JWT)))
+
+	// Route with JWT Auth
+	jwtAuth.GET("/users", c.GetUsersController)
+	jwtAuth.GET("/users/:id", c.GetUserController)
+	jwtAuth.DELETE("/users/:id", c.DeleteUserController)
+	jwtAuth.PUT("/users/:id", c.UpdateUserController)
+
+	jwtAuth.POST("/books", c.CreateBookController)
+	jwtAuth.DELETE("/books/:id", c.DeleteBookController)
+	jwtAuth.PUT("/books/:id", c.UpdateBookController)
+	return e
+}
