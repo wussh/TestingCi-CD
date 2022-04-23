@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
     # # Hanya men-trigger action jika ada perubahan di folder /controller
     # paths:d
     #   - controller/**
